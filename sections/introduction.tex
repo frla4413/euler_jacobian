@@ -1,0 +1,13 @@
+\section{Introduction}%
+\label{sec:introduction}
+
+Discretizing partial differential equations revolves around three major considerations:
+\begin{enumerate}
+  \item Stability
+  \item Simplicity
+  \item Efficiency
+\end{enumerate}
+These aspects continually compete for attention, and narrow focus on one of them is often detrimental to the other two. This paper is an attempt to strike a balance between the three in the context of the incompressible Euler equations. Point 1 (stability) is achieved by using well established techniques, such as weakly imposed boundary conditions and integration-by-parts mimicking discrete differential operators. Point 2 (simplicity) is achieved through a convenient notational structure that closely resembles the continuous notation both functionally and visually. Our ambition is to narrow the bridge between the continuous and discrete settings as much as possible so that understanding of the continuous problem transfers with little effort to the discrete problem. Point 3 (efficiency) is achieved using two key tools: encapsulation and explicit Jacobians. By encapsulation we mean that the discrete derivative operators can be thought of as abstract operators that act on discrete approximations of differentiable functions, while satisfying certain key properties (most notably accuracy and summation-by-parts). Such abstraction is useful, not only because it simplifies stability proofs, but also because it isolates concerns: Discrete differentiation can be implemented, optimized, and maintained in separation from any particular solver. Encapsulation also allows us to write down, in very compact form, explicit Jacobians for the discretized incompressible Euler equations in terms of the derivative operators. 
+
+Explicit Jacobians are particularly powerful in the context of implicit timestepping since they are typically orders of magnitude faster to evaluate than for example a finite difference based approximation of the Jacobian. Altough we in this paper consider the incompressible Euler equations in two dimensions, the framework can be extended to any type of hyperbolic or parabolic equations.
+

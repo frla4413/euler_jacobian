@@ -1,0 +1,221 @@
+\section{Discrete boundary conditions}%
+\label{sec:discrete_boundary_conditions}
+In this section we describe how to implement the boundary conditions from Section~\ref{sec:boundary_conditions} using penalty terms. The main idea is to associate to each boundary a penalty operator $\satn(\un, \vn, \pn)$ which is added to the Euler spatial operator $\euln(\un, \vn, \pn)$. Similarly, the Jacobian of $\satn$ is added to the Jacobian of $\euln$, since $J_{\euln+\satn} = J_{\euln} + J_{\satn}$.
+
+For a given boundary condition $H(u,v,p) = g$, a penalty operator $\satn$ will typically have the form
+$
+  \satn =
+  \begin{bmatrix}
+    \satn_1 & \satn_2 & \satn_3
+  \end{bmatrix}^\dagger
+$,
+where
+$
+  \satn_i = C_i (H(\un, \vn, \pn) - \gn)
+$,
+and $C_i$ is a penalty coefficient. When a boundary condition is not satisfied, its penalty operator $\satn$ will add appropriate contributions to $\euln$, pushing the solution toward compliance with the boundary condition. A penalty operator is ideally built such that it cancels the growth terms in~\eqref{eq:discrete_boundary_terms}, or replaces them with data, so we know that the kinetic energy cannot grow uncontrollably.
+
+\begin{definition}\label{def:stable_penalty}
+  A penalty operator
+  $
+    \satn^d =
+    \begin{bmatrix}
+      \satn^d_1 & \satn^d_2 & \satn^d_3
+    \end{bmatrix}^\dagger
+  $
+  for the boundary $\Gamma_d$ is called \emph{stable} if
+  \begin{equation*}
+    \text{PT} + \text{BT} \geq g_d \,,
+  \end{equation*}
+  where
+  \begin{equation*}
+    \text{PT} = 2\ipn{\un}{\satn^d_1} + 2\ipn{\vn}{\satn^d_2} + \ipn{\pn}{\satn^d_3} \,,
+  \end{equation*}
+  \begin{equation*}
+    \text{BT} = \ipbn{\wnn}{|\wn|^2} + 2\ipbn{\wnn}{\pn} \,,
+  \end{equation*}
+  and $g_d$ is a bounded time dependent function. Furthermore, if $\text{PT} + \text{BT} = 0$, then $\satn^d$ is called \emph{conservative}. Finally, if $\text{PT} + \text{BT} > 0$, then $\satn^d$ is called \emph{dissipative}.
+\end{definition}
+
+\begin{remark}
+  Note that any conservative or dissipative penalty operator is also stable.
+\end{remark}
+
+Definition~\ref{def:stable_penalty} is motivated by the following proposition, ensuring that the discretization~\eqref{eq:discrete_euler_explicit}, combined with stable penalty operators, is stable with respect to the kinetic energy.
+
+\begin{proposition}
+  Assume that for each boundary $\Gamma_d$ we have a stable penalty operator $\satn^d$. If $\un, \vn, \pn$ solves the system
+  \begin{equation*}
+    \begin{bmatrix}
+      \un_t \\
+      \vn_t \\
+      \zeron
+    \end{bmatrix}
+    + \euln + \sum_d \satn^d = \zeron \,,
+  \end{equation*}
+  then
+  \begin{equation*}
+    \frac{d}{dt} \normn{\wn}^2 \leq g \,,
+  \end{equation*}
+  where $g$ is a bounded time dependent function.
+\end{proposition}
+
+\begin{proof}
+ By using Proposition~\ref{prop:discrete_energy}, and adding the contribution from the penalty terms, we get that
+\begin{equation}
+\begin{aligned}
+   \frac{d}{dt} \|\wn\|_{\Omega_h}^2
+   = & - \sum_d\ipbn{\wnn}{|\wn|^2 + 2p} \\
+    & - 2 \sum_d
+    \left( \ipn{\un}{\satn_1^d} + \ipn{\vn}{\satn_2^d} + \ipn{\pn}{\satn_3^d}\right)
+    \\
+    =& - \sum_d BT + PT \le \sum_d g_d
+    \,.
+\end{aligned}
+\label{eq:discrete_boundary_proof}
+\end{equation}
+In~\eqref{eq:discrete_boundary_proof}, the term $\div \wn$ has been replaced by $- \sum_d\satn^d_3$. The last inequality holds since the penalty operator is stable.
+\end{proof}
+
+Let us start by introducing the concept of a discrete lifting operator $\Lng = \Pn^{-1} \Png$ associated to the boundary $\Gamma_d$. The lifting operator $\Lng$ is a sparse diagonal matrix with nonzero entries in the positions corresponding to the boundary $\Gamma_d$, which has the property that
+\begin{equation}
+  \ipn{\un}{\Lng \phin} = \ipbn{\un}{\phin} \,.
+\end{equation}
+Lifting operators are used in all our penalty terms because they allow us to convert integrals over $\Omega_h$ to integrals over $\Gamma_d$ in the energy analysis.
+
+Below we list Penalty Operator/Jacobian pairs $(\satn,J_{\satn})$ for the boundary conditions described in Section~\ref{sec:boundary_conditions}, on the form
+  \begin{equation*}
+    \satn =
+    \begin{bmatrix}
+      \satn_1 & \satn_2 & \satn_3
+    \end{bmatrix}^\dagger \,, \quad
+    J_{\satn} =
+    \begin{pmatrix}
+      \nablan_{\un} \satn_1 & \nablan_{\vn} \satn_1 & \nablan_{\pn} \satn_1 \\
+      \nablan_{\un} \satn_2 & \nablan_{\vn} \satn_2 & \nablan_{\pn} \satn_2 \\
+      \nablan_{\un} \satn_3 & \nablan_{\vn} \satn_3 & \nablan_{\pn} \satn_3
+    \end{pmatrix} \,.
+  \end{equation*}
+NOTE:\@ For the penalty operators considered in this paper, all blocks in $J_{\satn}$ are diagonal $N_x N_y$-by-$N_x N_y$ matrices. We shall therefore allow ourselves to omit the underline-notation and let it be understood that column vectors represent diagonal matrices in this context.
+
+\subsection{Solid wall}%
+\label{sub:solid_wall_discrete}
+\subsubsection*{Penalty operator}
+$\satn_1 = -\frac{1}{2} \Lng \un \wnn,\,$
+$\satn_2 = -\frac{1}{2} \Lng \vn \wnn,\,$
+and
+$\satn_3 = -\Lng \wnn$.
+
+\subsubsection*{Jacobian}
+$
+  \nablan_{\pn} \satn_1 =
+  \nablan_{\pn} \satn_2 =
+  \nablan_{\pn} \satn_3 = \zeron
+$
+and
+\begin{align*}
+  \nablan_{\un} \satn_1 = -\frac{1}{2} \Lng (\un\nnx + \wnn) \,, \quad
+  \nablan_{\un} \satn_2 = -\frac{1}{2} \Lng \vn\nnx \,, \quad
+  \nablan_{\un} \satn_3 = -\Lng \nnx \,, \\
+  %
+  \nablan_{\vn} \satn_1 = -\frac{1}{2} \Lng \un \nny \,, \quad
+  \nablan_{\vn} \satn_2 = -\frac{1}{2} \Lng (\vn\nny + \wnn) \,, \quad
+  \nablan_{\vn} \satn_3 = -\Lng \nny \,.
+\end{align*}
+\subsubsection*{Stability}
+We have $\ipn{2\un}{\satn_1} = -\ipbn{\un^2}{\wnn}, \, \ipn{2\vn}{\satn_2} = -\ipbn{\vn^2}{\wnn}$, and $\ipn{\pn}{\satn_3} = -\ipbn{\pn}{\wnn}$. Hence $\satn$ is conservative by Definition~\ref{def:stable_penalty}.
+\subsection{Pressure outflow}%
+\label{sub:pressure_outflow}
+\subsubsection*{Penalty operator}
+$\satn_1 = -\Lng \nnx \pn,\,$
+$\satn_2 = -\Lng \nny \pn,\,$
+and
+$\satn_3 = \zeron$.
+
+\subsubsection*{Jacobian}
+  $\nablan_{\pn} \satn_1 = -\Lng \nnx,\,$
+  $\nablan_{\pn} \satn_2 = -\Lng \nny,\,$
+  and the rest are $\zeron$.
+
+\subsubsection*{Stability}
+We have $\ipn{2\un}{\satn_1} = -\ipbn{2\un \nnx}{\pn}, \, \ipn{2\vn}{\satn_2} = -\ipbn{2\vn \nny}{\pn}$, and $\ipn{\pn}{\satn_3} = 0$. Hence, if $\wnn \geq \zeron$, then $\satn$ is dissipative by Definition~\ref{def:stable_penalty}.
+
+
+\subsection{Stabilized pressure outflow}%
+\label{sub:stabilized_pressure_outflow}
+Note: For this boundary operator to be differentiable we approximate the Heaviside function $h$ in Section~\ref{sub:stab_pressure} by a sigmoid function $h(\wcn) = 1/(e^{\wcn} + 1)$.
+\subsubsection*{Penalty operator}
+  \begin{equation*}
+    \begin{aligned}
+      \satn_1 &= -\Lng \nnx \left(h(\wnn)|\wn|^2 + \pn\right) \,, \\
+      \satn_2 &= -\Lng \nny \left(h(\wnn)|\wn|^2 + \pn\right) \,, \\
+      \satn_3 &= \zeron\,.
+    \end{aligned}
+  \end{equation*}
+
+\subsubsection*{Jacobian}
+\begin{align*}
+  \nablan_{\un} \satn_1 &= -\Lng \nnx\left(\nablan_{u}h(\wnn)|\wn|^2 + 2h(\wnn) (\wnn \nnx - \wtn \nny)\right) \\
+\nablan_{\vn} \satn_1 &= -\Lng \nnx\left(\nablan_{v}h(\wnn)|\wn|^2 + 2h(\wnn) (\wnn \nny + \wtn \nnx)\right) \\
+  \nablan_{\pn} \satn_1 &= -\Lng \nnx \\
+  \nablan_{\un} \satn_2 &= -\Lng \nny\left(\nablan_{u}h(\wnn)|\wn|^2 + 2h(\wnn) (\wnn \nnx - \wtn \nny)\right) \\
+  \nablan_{\vn} \satn_2 &= -\Lng \nny\left(\nablan_{v}h(\wnn)|\wn|^2 + 2h(\wnn) (\wnn \nny + \wtn \nnx)\right) \\
+  \nablan_{\pn} \satn_2 &= -\Lng \nny
+\end{align*}
+where
+\begin{align*}
+  \nablan_{\un}h(\wnn) &= -\frac{e^{\wnn}}{{(e^{\wnn} + 1)}^2}\nnx \,,
+  \\
+  \nablan_{\vn}h(\wnn) &= -\frac{e^{\wnn}}{{(e^{\wnn} + 1)}^2}\nny \,.
+\end{align*}
+Furthermore,
+\[ \nablan_{\un} \satn_3 = \nablan_{\vn} \satn_3 = \nablan_{\pn} \satn_3 = \zeron \,. \]
+
+\subsubsection*{Stability}
+We have
+\begin{align*}
+  \ipn{2\un}{\satn_1} & = -\ipbn{2\un \nnx}{h(\wnn)|\wn|^2 + \pn} \\
+  \ipn{2\vn}{\satn_2} & = -\ipbn{2\vn \nny}{h(\wnn)|\wn|^2 + \pn} \\
+  \ipn{\pn}{\satn_3}  & = 0 \,.
+\end{align*}
+Hence $\satn$ is conservative if $\wnn \leq 0$ and dissipative otherwise.
+
+\subsection{Inflow}%
+\label{sub:inflow}
+\subsubsection*{Penalty operator}
+  \begin{equation*}
+    \begin{aligned}
+      \satn_1 &= -\Lng \nnx \wnn (\wnn - \gn_n) + \Lng \nny \wnn (\wtn - \gn_s)\,, \\
+      \satn_2 &= -\Lng \nny \wnn (\wnn - \gn_n) - \Lng \nnx \wnn (\wtn - \gn_s)\,, \\
+      \satn_3 &= -\Lng(\wnn - \gn_n).
+    \end{aligned}
+  \end{equation*}
+
+\subsubsection*{Jacobian}
+  \begin{equation*}
+    \begin{aligned}
+      \nablan_{\un} \satn_1 &= -\Lng \left(\nnx^2(2\wnn - \gn_n) + \nny^2\wnn + \nnx \nny (\wtn - \gn_t)\right)\,, \\
+      \nablan_{\vn} \satn_1 &= \phantom{-}\Lng \left(\nny^2(\wtn - \gn_t) - \nnx\nny(\wnn - \gn_n)\right)\,, \\
+      \nablan_{\un} \satn_2 &= -\Lng \left(\nnx^2(\wtn - \gn_t) + \nnx\nny(\wnn - \gn_n)\right)\,, \\
+      \nablan_{\vn} \satn_2 &= -\Lng \left(\nny^2(2\wnn - \gn_n) + \nnx^2\wnn + \nnx \nny (\wtn - \gn_t)\right) \,, \\
+      \nablan_{\un} \satn_3 &= -\Lng \nnx \,, \\
+      \nablan_{\vn} \satn_3 &= -\Lng \nny \,,
+    \end{aligned}
+  \end{equation*}
+  and the rest are $\zeron$.
+
+\subsubsection*{Stability}
+As seen in Section~\ref{sub:inflow}, imposing Dirichlet conditions at an inflow boundary do not result in a bound. We get 
+\begin{align*}
+  PT + BT & = 
+  %\ipn{2\un}{\satn_1}  + \ipn{2\vn}{\satn_2} + \ipn{\pn}{\satn_3} 
+  %+ \ipbn{\wnn}{|\wn|^2} + 2\ipbn{\wnn}{\pn}
+  %\\
+  %& = -\ipbn{2\wnn^2}{\wnn-\gn_n} -\ipbn{2\wnn \wtn}{\wtn-\gn_s} 
+  %- \ipbn{2\pn}{\wnn-\gn_n}
+  %\\
+  %& +\ipbn{\wnn}{|\wn|^2} + 2\ipbn{\wnn}{\pn}
+  %\\
+  %& = 
+  \ipbn{\wnn}{-\wnn^2 + 2 \wnn \gn_n} + \ipbn{\wnn}{-\wtn^2 + 2 \wtn \gn_n}
+\end{align*}

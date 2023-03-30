@@ -1,0 +1,30 @@
+\section{Jacobian properties}%
+\label{sub:jacobian_properties}
+Let $\fn, \gn : \mathbb{R}^n \to \mathbb{R}^n$ be vector-valued differentiable functions and define the diagonal matrices
+\[
+  \diagn{\fn} =
+  \begin{bmatrix}
+    f_1 &     &        &     \\
+        & f_2 &        &     \\
+        &     & \ddots &     \\
+        &     &        & f_n \\
+  \end{bmatrix}
+  \text{ and }
+  \diagn{\gn} =
+  \begin{bmatrix}
+    g_1 &     &        &     \\
+        & g_2 &        &     \\
+        &     & \ddots &     \\
+        &     &        & g_n \\
+  \end{bmatrix} \,.
+\]
+It is readily seen that the Jacobian $J_{\fn\gn}$ of the elementwise product $\fn\gn$ satisfies the following product rule:
+\begin{equation}
+  \label{eq:jacobian_product_rule}
+  J_{\fn\gn} = \diagn{\fn}J_{\gn} + \diagn{\gn}J_{\fn} \,.
+\end{equation}
+Furthermore, the Jacobian is linear in the sense that for any $n$-by-$n$ matrices $A$ and $B$ we have
+\begin{equation}
+  \label{eq:jacobian_linear}
+  J_{A\fn + B\gn} = AJ_{\fn} + BJ_{\gn} \,.
+\end{equation}

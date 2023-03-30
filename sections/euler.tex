@@ -1,0 +1,139 @@
+\section{The incompressible Euler equations}%
+\label{sec:euler}
+Consider the incompressible Euler equations
+\begin{subequations}%
+\label{eq:euler_nobc}
+  \begin{align}
+    \wc_t + \wc \cdot \nabla \wc &= -\nabla p \label{eq:continuous_euler1} \\
+    \div \wc &= 0 \label{eq:div_zero}
+  \end{align}
+\end{subequations}
+where
+$
+  \wc =
+  \begin{bmatrix}
+    \uc & \vc
+  \end{bmatrix}^\top
+$
+is the velocity field, $p$ is the pressure. The form~\eqref{eq:continuous_euler1} is not suitable for discretization because its energy analysis relies on the chain rule, which cannot be replicated discretely. Let us go through the energy analysis to see that it does indeed rely on the chain rule (this will also help us understand how to get around the problem).
+
+The rate of change in the kinetic energy $\frac{1}{2}\normc{\wc}^2$ can be found by multiplying~\eqref{eq:continuous_euler1} by $2\wc^\top$ and integrating in space, since
+\[
+  2\ipc{\wc}{\wc_t} = \frac{d}{dt} \|\wc\|_\Omega^2 \,.
+\]
+The convective term $\wc \cdot \nabla \wc$ adds or dissipates energy through the boundaries via the integral
+$
+  2\ipc{\wc}{\wc \cdot \nabla \wc}
+$.
+Let $\wcn = \wc \cdot \nc$ (the normal velocity). An expression for the energy rate of change due to convection can be derived as follows.
+\begin{lemma}\label{lemma:convection1}
+  The incompressible Euler equations~\eqref{eq:euler_nobc} imply that
+  \begin{equation*}
+    2\ipc{\wc}{\wc \cdot \nabla \wc} = \ipbc{\wcn}{|\wc|^2} \,.
+  \end{equation*}
+\end{lemma}
+\begin{proof}
+  \begin{align*}
+    2\ipc{\wc}{\wc \cdot \nabla \wc}
+      &= 2\ipc{u}{\wc \cdot \nabla u} + 2\ipc{v}{\wc \cdot \nabla v} \\
+      &= \ipc{\wc}{\nabla u^2} + \ipc{\wc}{\nabla v^2} &&\text{(Chain rule)} \\
+      &= \ipc{\wc}{\nabla |\wc|^2} \\
+      &= \ipbc{\wcn}{|\wc|^2} - \ipc{\div \wc}{|\wc|^2} &&\text{(Green's identity)} \\
+      &= \ipbc{\wcn}{|\wc|^2} &&\text{(Zero divergence)}\,.
+  \end{align*}
+\end{proof}
+
+Using Lemma~\ref{lemma:convection1} it is straightforward to write $ \frac{d}{dt} \normc{\wc}^2$ in terms of boundary contributions.
+\begin{proposition}\label{prop:energy1}
+  The incompressible Euler equations~\eqref{eq:euler_nobc} imply that
+  \begin{equation*}
+    \frac{d}{dt} \normc{\wc}^2 = -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p}\,.
+  \end{equation*}
+\end{proposition}
+\begin{proof}
+  \begin{align*}
+    \frac{d}{dt} \normc{\wc}^2
+      &= -2\ipc{\wc}{\wc \cdot \nabla \wc} - 2\ipc{\wc}{\nabla p} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipc{\wc}{\nabla p} &&\text{(Lemma~\ref{lemma:convection1})} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p} + 2\ipc{\div \wc}{p} &&\text{(Green's identity)} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p} &&\text{(Zero divergence)} \\
+  \end{align*}
+\end{proof}
+
+We want to remove the dependence on the chain rule in the energy analysis. To this end, note that the identity
+$
+  \div (\wc \wc^\top) = \wc \div \wc + \wc \cdot \nabla \wc = \wc \cdot \nabla \wc
+$
+holds since $\div \wc = 0$. Hence, the incompressible Euler equations  can be rewritten in split form as
+\begin{subequations}%
+\label{eq:euler_nobc_split}
+  \begin{align}
+    \wc_t + \frac{1}{2} \wc \cdot \nabla \wc + \frac{1}{2} \div (\wc \wc^\top) &= -\nabla p \label{eq:continuous_euler2} \\
+    \div \wc &= 0 \,. \label{eq:div_zero2}
+  \end{align}
+\end{subequations}
+The energy analysis for~\eqref{eq:euler_nobc_split} can then be performed without the chain rule by using the following lemma.
+
+\begin{lemma}\label{lemma:convection2}
+  For any smooth $\wc : \Omega \to \mathbb{R}^2$,
+  \begin{equation*}
+    \ipc{\wc}{\wc \cdot \nabla \wc} = \ipbc{\wcn}{|\wc|^2} - \ipc{\wc}{\div (\wc \wc^\top)} \,.
+  \end{equation*}
+\end{lemma}
+
+\begin{proof}
+  \begin{align*}
+    \ipc{\wc}{\wc \cdot \nabla \wc}
+      &= \ipc{u}{\wc \cdot \nabla u} + \ipc{v}{\wc \cdot \nabla v} \\
+      &= \ipc{u\wc}{\nabla u} + \ipc{v\wc}{\nabla v} \\
+      &= \ipbc{u\wcn}{u} - \ipc{\div (u\wc)}{u} + \ipbc{v\wcn}{v} - \ipc{\div (v\wc)}{v} \\
+      &= \ipc{\wcn}{u^2+v^2} - \ipc{u}{\div (u\wc)} - \ipc{v}{\div (v\wc)} \\
+      &= \ipbc{\wcn}{|\wc|^2} - \ipc{u}{\div (u\wc)} - \ipc{v}{\div (v\wc)} \\
+      &= \ipbc{\wcn}{|\wc|^2} - \ipc{\wc}{\div (\wc \wc^\top)} \,.
+  \end{align*}
+  In the above equalities we have only used Green's identity and the definitions of the inner products.
+\end{proof}
+Finally we restate Proposition~\ref{prop:energy1} for the split form incompressible Euler equations~\eqref{eq:euler_nobc_split}, and prove it without reference to the chain rule.
+
+\begin{proposition}\label{prop:energy2}
+   The split form incompressible Euler equations~\eqref{eq:euler_nobc_split} imply that
+  \begin{equation*}
+    \frac{d}{dt} \normc{\wc}^2 = -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p}\,.
+  \end{equation*}
+\end{proposition}
+
+\begin{proof}
+  \begin{align*}
+    \frac{d}{dt} \normc{\wc}^2
+      &= -\ipc{\wc}{\wc \cdot \nabla \wc} -\ipc{\wc}{\div (\wc \wc^\top)} - 2\ipc{\wc}{\nabla p} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipc{\wc}{\nabla p} &&\text{(Lemma~\ref{lemma:convection2})} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p} + 2\ipc{\div \wc}{p} &&\text{(Green's identity)} \\
+      &= -\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p} &&\text{(Zero divergence)} \\
+  \end{align*}
+\end{proof}
+
+\begin{remark}
+  The proof of Proposition~\ref{prop:energy2} relies only on properties that can be replicated discretely, namely Green's identity and algebraic properties of the inner product. In fact, as we shall see in Section~\ref{sec:discretization}, the energy analysis of our discretization of the split form incompressible Euler equations~\eqref{eq:euler_nobc_split} is identical to the proofs of Lemma~\ref{lemma:convection2} and Proposition~\ref{prop:energy2}.
+\end{remark}
+
+If the boundary terms in Proposition~\ref{prop:energy2} can be bounded in terms of data, then a bound on the kinetic energy can be found at any given time in terms of initial and boundary data.
+
+\begin{proposition}\label{prop:kinetic_energy_bound}
+ Assume that $\wc$ and $p$ are smooth solutions to~\eqref{eq:euler_nobc_split} and that  $\wc = \vecs{f}$ for $t=0$, where $\vecs{f}$ is the initial data.
+ Furthermore, assume that $-\ipbc{\wcn}{|\wc|^2} - 2\ipbc{\wcn}{p} = g$. Then for $T > 0$,
+  \begin{equation*}
+    \normc{\wc}^2(T) = \normc{\vecs{f}}^2 + \int_0^T g(t) dt \,.
+  \end{equation*}
+\end{proposition}
+
+\begin{proof}
+  By Proposition~\ref{prop:energy2},
+  \begin{equation*}
+    \int_0^T \frac{d}{dt} \normc{\wc}^2dt = \normc{\wc}^2(T) - \normc{\wc}^2(0) = \int_0^T g(t) dt \,.
+  \end{equation*}
+  Hence,
+  \begin{equation*}
+    \normc{\wc}^2(T) = \normc{\vecs{f}}^2 + \int_0^T g(t) dt \,.
+  \end{equation*}
+\end{proof}
+

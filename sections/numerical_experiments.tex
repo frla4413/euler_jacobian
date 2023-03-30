@@ -1,0 +1,189 @@
+\section{Numerical experiments}%
+\label{sec:numerical_experiments}
+To evolve the system in time, we will use the implicit Backward Euler method. For an ordinary differential equation of the form
+\begin{equation*}
+ \Mn \soln_t + \Hn(\soln) = 0
+ \, ,
+\end{equation*}
+where $\soln$ is a grid function and $\Mn$ is a constant matrix, the Backward Euler schemes becomes 
+\begin{equation}
+  \frac{\Mn (\soln^{i+1} - \soln^i)}{\Delta t} + \Hn(\soln^{i+1}) = 0
+  \,.
+  \label{eq:backward_euler}
+\end{equation}
+In~\eqref{eq:backward_euler}, $\Delta t$ is the size of the time step and the indices $i$ and $i+1$ are the solution at time level $i$ and $i+1$, respectively.
+
+In order to obtain $\soln^{i+1}$, the system of nonlinear equations in~\eqref{eq:backward_euler} needs to be solved. One strategy is to first form the function 
+\begin{equation}
+  \Fn(\soln^{i+1}) = 
+  \frac{\Mn (\soln^{i+1} - \soln^i)}{\Delta t} + \Hn(\soln^{i+1})
+  \,.
+  \label{eq:F_function}
+\end{equation}
+If we find a vector $\soln^*$ such that $\Fn(\soln^*) = 0$, then $\soln^{i+1} = \soln^*$. To solve~\eqref{eq:F_function}, we can employ Newton's method~\cite{quarteroni2010numerical}, which is described in Algorithm~\ref{alg:newton}. This allows us to solve a sequence of linear system of equations to obtain an approximation of $\soln^*$.
+\begin{algorithm}
+  \KwData{Initial guess, $\soln^0$, and tolerance $tol$}
+  \KwResult{An approximation of $\soln^*$, where $\Fn(\soln^*) = 0$}
+  \For{$i = 0,1,2, \dots$}{%
+   solve $J_{\Fn}(\soln^i)\bm{h}^i   = - \Fn(\soln^i)$
+   \\
+   set   $\soln^{i+1}  = \soln^i + \bm{h}^i$
+
+   \If{$\|\Fn(\soln^{i+1})\| < tol$}{%
+    return $\soln^{i+1}$
+ }
+ }
+ \caption{Newton's method.}%
+ \label{alg:newton}
+\end{algorithm}
+
+For the Euler equations, $\Hn(\soln) = \euln(\soln) + \satn(\soln)$, where
+\[
+  \soln =
+  \begin{bmatrix}
+    \un & \vn & \pn
+  \end{bmatrix}^\top
+  \quad \text{and} \quad
+  \Mn =
+  \begin{pmatrix}
+    \In    & \zeron & \zeron \\
+    \zeron & \In    & \zeron \\
+    \zeron & \zeron & \zeron
+  \end{pmatrix}
+  \,.
+\]
+Hence,~\eqref{eq:backward_euler} becomes
+\begin{equation}
+  \frac{1}{\Delta t} 
+  \left(
+    \begin{bmatrix}
+      \un^{i+1} \\ \vn^{i+1} \\ \zeron
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+      \un^{i} \\ \vn^{i} \\ \zeron
+    \end{bmatrix}
+    \right)
+    + \euln(\soln^{i+1}) + \satn(\soln^{i+1})
+    = 0
+  \label{eq:backward_euler_euler}
+\end{equation}
+and~\eqref{eq:F_function} turns into
+\begin{equation}
+  \Fn(\soln^{i+1}) = 
+  \frac{1}{\Delta t} 
+  \left(
+    \begin{bmatrix}
+      \un^{i+1} \\ \vn^{i+1} \\ \zeron
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+      \un^{i} \\ \vn^{i} \\ \zeron
+    \end{bmatrix}
+    \right)
+    + \euln(\soln^{i+1}) + \satn(\soln^{i+1})
+  \, .
+  \label{eq:F_function_euler}
+\end{equation}
+Furthermore, $J_{\Hn}(\soln) = J_{\euln}(\soln) + J_{\satn}(\soln)$, which yields
+\begin{equation*}
+  J_{\Fn}(\soln) =  
+  \frac{1}{\Delta t}
+  \Mn
+  +
+  J_{\euln}(\soln)
+  +
+  J_{\satn}(\soln)
+  \, ,
+\end{equation*}
+to be used in the Newton iterations. The explicit forms of $J_{\euln}(\soln)$ and $J_{\satn}(\soln)$ are found in~\ref{sec:discretization} and Section~\ref{sec:discrete_boundary_conditions}, respectively.
+
+In all computations below, the initial guess is the solution from the previous time step and the tolerance is set to $10^{-12}$.
+
+%\subsection{Stability analysis}
+%Multiplying \eqref{eq:backward_euler} by $(\un^{i+1})^\top$, we get 
+%\begin{equation*}
+%  \|\un^{i+1}\|^2 = (\un^{i+1})^\top \un^{i} - \Delta t (\un^{i+1})^\top \Hn(\un^{i+1})
+%  \, ,
+%\end{equation*}
+%where $\|\un\|^2 = \un^\top \un$. If $\un^\top \Hn(\un) \ge 0$ for all $\un$, then 
+%\begin{equation*}
+%   \|\un^{i+1}\|^2 \le (\un^{i+1})^\top \un^{i} \le \|\un^i\|\|\un^{i+1}\|
+%   \Rightarrow 
+%   \underline{
+%   \underline{
+%   \|\un^{i+1}\| \le \|\fn\|}}
+%  \, ,
+%\end{equation*}
+%where $\fn$ is the initial data.
+
+%For the Euler eqautions, the 
+
+%The fully discrete form of the incompressible Euler equations~\eqref{eq:euler_nobc_split} becomes 
+%\begin{equation}
+%   \frac{1}{dt}\left[
+%    \begin{pmatrix}
+%      \un^{i+1} \\ \vn^{i+1} \\ \zeron
+%    \end{pmatrix}
+%    -
+%    \begin{pmatrix}
+%      \un^{i} \\ \vn^{i} \\ \zeron
+%    \end{pmatrix}
+%    \right]
+%    + \euln(\un^{i+1},\vn^{i+1},\pn^{i+1}) = 0
+%    %,
+%    %\quad i = 1,\dots, N_t-1
+%    \, ,
+%    \label{eq:backward_euler}
+%\end{equation}
+%for $i = 1,\dots N_t-1$, which must be solved to advance in time. As can be seen from~\eqref{eq:backward_euler}, no initial condtion for the pressure is required.
+
+\subsection{The order of accuracy}
+The method of manufactured solution is used to verify the implementation. For the SBP-operators SBP21 and SBP42, the expected orders of accuracy are 2 and 3, respectively~\cite{svard2014review}. The manufactured solution is 
+\begin{equation*}
+  \begin{aligned}
+    u & = 1 + 0.5 \sin(2\pi x-t)\sin(2\pi y-t)
+    \\
+    v & = 1 + 0.5 \cos(2\pi x-t)\cos(2\pi y-t)
+    \\
+    p & = 0.5 \sin(2\pi x-t)\cos(2\pi y-t)
+ \end{aligned}
+\end{equation*}
+and the domain is illustrated in Figure~\ref{fig:bump_flow}. Since the west and south sides of the domain are inflow boundaries, both $w_n$ and $w_t$ are specified (see Section~\ref{sec:continuous_inflow} and Section~\ref{sub:inflow} for details). At the east and north sides, which are outflow boundaries, only the pressure is prescribed (see Section~\ref{sec:pressure_outflow} and Section~\ref{sub:pressure_outflow} for details).
+
+The step size is chosen to be $\Delta t = 10^{-4}$ and the computations are terminated at $t = 1$. Then, we compute the pointwise error, $\en$ and its $L_2$-norm $\|\en\|_{\Omega_h}$. The convergence rate is given by $r = \log(\|\en\|_{i}/\|\en\|_{j})/\log((j-1)/(i-1))$, where $i$ and $j$ refer to the number of grid points in both spatial dimensions. The results are presented in Table~\ref{tab:convergence_table} and agree well with theory.
+\begin{table}
+\centering
+\setlength{\tabcolsep}{12pt}
+\begin{tabular}{c| cc | cc cc}
+ \hline
+ \hline
+ operator
+ & \multicolumn{2}{c|}{SBP21}
+ & \multicolumn{2}{c}{SBP42}
+ \\
+\hline
+ \hline
+N & $\|\en\|$ & $r$ &$\|\en\|$ & $r$
+\\
+\hline
+11 & 1.60e+00 & --   & 5.19e-01 & --
+\\                   
+21 & 1.84e-01 & 3.12 & 8.93e-02 & 2.54 
+\\                   
+41 & 4.25e-02 & 2.12 & 1.32e-02& 2.76
+\\                   
+61 & 2.84e-02 & 2.05 & 3.92e-03& 2.98  
+\\
+81& 1.03e-02 & 2.02  & 1.67e-03 & 2.97  
+\\
+101& 6.58e-03 & 2.01 & 8.61e-04 & 2.95 
+\\
+\hline
+Theoretical && 2 && 3
+\end{tabular}
+\caption{Error and convergence rate.}%
+\label{tab:convergence_table}
+\end{table}
+
+\FloatBarrier%
