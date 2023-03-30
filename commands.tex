@@ -17,16 +17,28 @@
 \newcommand{\ipgd}[2]{\left(#1, #2\right)_{\Gamma_d}} %Inner product on Gamma_d
 \newcommand{\normc}[1]{\|#1\|_\Omega}
 
+\newcommand{\Rbb}{\mathbb{R}}
 
 %Discrete
+\newcommand{\w}{\vecs{w}}
+\newcommand{\f}{\vecs{f}}
+\newcommand{\g}{\vecs{g}}
+\newcommand{\It}{\tilde{I}}
+\newcommand{\phiv}{\vecs{\phi}}
+\newcommand{\psiv}{\vecs{\psi}}
 \newcommand{\wn}{\vecs{\bm{w}}}
 \newcommand{\wnn}{\bm{w}_n}
 \newcommand{\wtn}{\bm{w}_s}
+\newcommand{\Un}{\bm{U}}
+\newcommand{\Vn}{\bm{V}}
 \newcommand{\un}{\bm{u}}
 \newcommand{\vn}{\bm{v}}
 \newcommand{\pn}{\bm{p}}
 \newcommand{\fn}{\bm{f}}
+\newcommand{\hn}{\bm{h}}
 \newcommand{\gn}{\bm{g}}
+\newcommand{\kn}{\bm{k}}
+\newcommand{\qn}{\bm{q}}
 \newcommand{\en}{\bm{e}}
 \newcommand{\xn}{\bm{x}}
 \newcommand{\xin}{\vecs{\bm{\xi}}}
@@ -34,15 +46,18 @@
 \newcommand{\psin}{\vecs{\bm{\psi}}}
 \newcommand{\zeron}{\bm{0}}
 \newcommand{\In}{\bm{I}}
+\newcommand{\Itn}{\bm{\tilde{I}}}
 \newcommand{\nn}{\vecs{\bm{n}}}
 \newcommand{\nnx}{\bm{n}_x}
 \newcommand{\nny}{\bm{n}_y}
 \newcommand{\nablan}{\bm{\nabla}}
 \newcommand{\divn}{\bm{\nabla\cdot}}
+\newcommand{\An}{\bm{A}}
+\newcommand{\Bn}{\bm{B}}
+\newcommand{\BTn}{\bm{BT}}
 \newcommand{\Dx}{\bm{D_x}}
 \newcommand{\Dy}{\bm{D_y}}
 \newcommand{\Pn}{\bm{P}}
-\newcommand{\Png}{\bm{P}_d}
 \newcommand{\Ln}{\bm{L}}
 \newcommand{\Lng}{\bm{L}_d}
 \newcommand{\Pncal}{\bm{\mathcal{P}}}
@@ -50,11 +65,19 @@
 \newcommand{\normn}[1]{\|#1\|_{\Omega_h}}
 \newcommand{\ipbn}[2]{\left(#1, #2\right)_{\Gamma_d}} %Discrete inner product on Gamma
 \newcommand{\ipbnfull}[2]{\left(#1, #2\right)_{\partial \Omega_h}} %Discrete inner product on Gamma
+\newcommand{\eul}{\mathcal{L}}
 \newcommand{\euln}{\bm{\mathcal{L}}}
+\newcommand{\eulnh}{\bm{\mathcal{L}_h}}
 \newcommand{\satn}{\bm{\mathcal{S}}}
 \newcommand{\Hn}{\bm{\mathcal{H}}}
 \newcommand{\Fn}{\bm{\mathcal{F}}}
 \newcommand{\Mn}{\mathcal{M}}
 \newcommand{\diagn}[1]{\underline{#1}}
-\newcommand{\soln}{\bm{\chi}}
+\newcommand{\soln}{\bm{\phi}}
 \newcommand{\cdotn}{\bm{\cdot}}
+
+%Taken from https://tex.stackexchange.com/questions/237325/how-to-make-box-in-a-row-of-a-table
+\def\boxit#1{%
+  \smash{\color{blue}\fboxrule=1pt\relax\fboxsep=2pt\relax%
+  \llap{\rlap{\fbox{\vphantom{0}\makebox[#1]{}}}~}}\ignorespaces
+}

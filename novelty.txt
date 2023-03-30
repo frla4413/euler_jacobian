@@ -1,0 +1,4 @@
+Significance and Novelty of this paper:
+
+We derive an explicit form of the Jacobian for discrete approximations of nonlinear initial boundary value problems on matrix-vector form. The technique is exemplified on the incompressible Navier-Stokes equations in two dimensions. The Jacobian facilitates the use of Newton's method to solve the corresponding nonlinear system of equations. Appropriate boundary conditions are weakly imposed  and we show how to compute the Jacobian for those parts of the discretization as well. 
+The convergence rate of the iterations is verified by using the method of manufactured solutions. The methodology in this paper that can be used on any numerical discretization of IBVPs on matrix-vector form.

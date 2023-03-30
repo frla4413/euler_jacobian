@@ -1,0 +1,80 @@
+% SIAM Shared Information Template
+% This is information that is shared between the main document and any
+% supplement. If no supplement is required, then this information can
+% be included directly in the main document.
+
+
+% Packages and macros go here
+\usepackage{lipsum}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{algorithmic}
+%\usepackage{algpseudocode}
+%\usepackage{array} % <- Preamble 
+%\usepackage{subfig} % <- Preamble
+
+%\usepackage{amsmath}
+%\usepackage{mathtools}
+\usepackage{cleveref}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{placeins}
+%\usepackage{tcolorbox}
+%\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage[]{algorithm2e}
+%\usepackage{amsthm}
+\usepackage{url} % to cite webpage
+\usepackage[utf8]{inputenc}
+%\newtcolorbox{satbox}{colback=green!5!white,colframe=green!75!black}
+%\newtcolorbox{jacbox}{colback=yellow!5!white,colframe=yellow!75!black}
+%\newtheorem{definition}{Definition}
+%\newtheorem{remark}{Remark}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{lemma}{Lemma}
+
+
+\ifpdf
+  \DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg}
+\else
+  \DeclareGraphicsExtensions{.eps}
+\fi
+
+% Prevent itemized lists from running into the left margin inside theorems and proofs
+\usepackage{enumitem}
+\setlist[enumerate]{leftmargin=.5in}
+\setlist[itemize]{leftmargin=.5in}
+
+% Add a serial/Oxford comma by default.
+\newcommand{\creflastconjunction}{, and~}
+
+% Used for creating new theorem and remark environments
+\newsiamremark{remark}{Remark}
+\newsiamremark{hypothesis}{Hypothesis}
+\crefname{hypothesis}{Hypothesis}{Hypotheses}
+\newsiamthm{claim}{Claim}
+\input{commands.tex}
+
+% Sets running headers as well as PDF title and authors
+\headers{An Explicit Jacobian}{F. Laur\'en, O. $\rm \mathring{A}$lund, and J. Nordstr\"om}
+
+% Title. If the supplement option is on, then "Supplementary Material"
+% is automatically inserted before the title.
+\title{An Explicit Jacobian for Newton's Method Applied to Numerical Approximations of Nonlinear Initial Boundary Value Problems\thanks{Submitted to the editors \today.
+\funding{This work was funded by the Swedish Research Council (Stokcholm) under grant number 2018-05084\_VR} and SESSI.}}
+
+% Authors: full names plus addresses.
+\author{Fredrik Laur\'en\thanks{Department of Mathematics, Computational Mathematics, Link\"oping University, SE-581 83 Link\"oping, Sweden 
+(\email{fredrik.lauren@liu.se}),(\email{oskar.alund@liu.se}), (\email{jan.nordstrom@liu.se}).}
+\and Oskar $\rm \mathring{A}$lund \footnotemark[2]
+\and Jan Nordstr\"om \footnotemark[2]\ \thanks{Department of Mathematics and Applied Mathematics, University of Johannesburg,P.O. Box 524, Auckland Park 2006, South Africa}.}
+
+\usepackage{amsopn}
+\DeclareMathOperator{\diag}{diag}
+
+
+%%% Local Variables: 
+%%% mode:latex
+%%% TeX-master: "ex_article"
+%%% End: 

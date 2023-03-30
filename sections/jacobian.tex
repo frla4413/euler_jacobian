@@ -1,0 +1,756 @@
+\section{Exact computation of the Jacobian}\label{sec:jacobian}
+In this section, we will explicitly compute the Jacobian of $\euln$ and $\satn$ in \eqref{eq:ins_semi_discrete}. Let $\hn :\Rbb^{n} \to \Rbb^{n}$, where $n = (N+1)(M+1)$ is the total number of grid points, be a differentiable vector function. For a given vector $\un = (u_{00}, \dots u_{NM})^\top \in \Rbb^{n}$, $\hn$ outputs the vector $\hn(\un) = (h_{00}, \dots h_{NM})^\top \in \Rbb^{n}$. The Jacobian matrix $J_{\hn} \in \Rbb^{n\times n}$ of $\hn$ is given by
+\[
+  J_{\hn} =  
+  \begin{pmatrix}
+     \frac{\partial h_{00}}{\partial u_{00}} & \dots & 
+     \frac{\partial h_{00}}{\partial u_{NM}} 
+     \\
+     \vdots  &\ddots & \vdots
+     \\
+     \frac{\partial h_{NM}}{\partial u_{00}} & \dots 
+     & \frac{\partial h_{NM}}{\partial u_{NM}} 
+  \end{pmatrix}
+  \, .
+\]
+
+We will first derive the Jacobian of the different terms in $\euln(\wn)$ and at the end, add the terms and state the complete result. To start, consider the vector function 
+\[
+  \hn(\un) 
+  =
+  \begin{pmatrix}
+      h_{00} \\ \vdots \\ h_{NM} 
+  \end{pmatrix}
+  = 
+  \begin{pmatrix}
+      u_{00} \\ \vdots \\ u_{NM} 
+  \end{pmatrix}
+  =
+  \un
+  \, .
+\]
+Since
+{\footnotesize
+\begin{align*}
+  &\frac{\partial h_{00}}{\partial u_{00}} = 1 %\quad 
+  &\frac{\partial h_{00}}{\partial u_{01}} = 0 %\quad 
+  &&\frac{\partial h_{00}}{\partial u_{02}} = 0 %\quad 
+  &&\dots 
+  &&\frac{\partial h_{00}}{\partial u_{NM}} = 0 %\quad 
+  \\
+  &\frac{\partial h_{01}}{\partial u_{00}} = 0 %\quad 
+  &\frac{\partial h_{01}}{\partial u_{01}} = 1 %\quad 
+  &&\frac{\partial h_{01}}{\partial u_{02}} = 0 %\quad 
+  &&\dots 
+  &&\frac{\partial h_{01}}{\partial u_{NM}} = 0 %\quad 
+  \\
+  & & & \vdots 
+  \\
+  &\frac{\partial h_{NM}}{\partial u_{00}} = 0 %\quad 
+  &\frac{\partial h_{NM}}{\partial u_{01}} = 0 %\quad 
+  &&\frac{\partial h_{NM}}{\partial u_{02}} = 0 %\quad 
+  &&\dots 
+  &&\frac{\partial h_{NM}}{\partial u_{NM}} = 1 %\quad 
+  \, ,
+\end{align*}
+}
+the Jacobian of $\hn(\un) = \un$ becomes $J_{\un} = \In$.
+%\[
+%  J_{\un} =  
+%  \begin{pmatrix}
+%    \frac{\partial h_{00}}{\partial u_{00}} & \dots & 
+%    \frac{\partial h_{00}}{\partial u_{NM}} 
+%     \\
+%     \vdots  &\ddots & \vdots
+%     \\
+%     \frac{\partial h_{NM}}{\partial u_{00}} & \dots & 
+%     \frac{\partial h_{NM}}{\partial u_{NM}} 
+%  \end{pmatrix}
+%  =
+%  \begin{pmatrix}
+%    1 & 0 & \dots 
+%    \\
+%    0 & 1 & 0 & \dots
+%    \\
+%    & & \ddots 
+%    \\
+%    & & 0 & 1
+%  \end{pmatrix}
+%  = \In
+%  \, .
+%\]
+Now let
+\begin{equation*}
+\begin{aligned}
+  \hn(\un) & =  
+  \begin{pmatrix}
+      h_{00} \\ \vdots \\ h_{NM} 
+  \end{pmatrix}
+  =
+  \Dx \un
+  = 
+  \begin{pmatrix}
+    D_{0,0} & \dots & D_{0,NM}
+    \\
+    \vdots  &\ddots & \vdots
+    \\
+    D_{NM,0} & \dots & D_{NM,MN}
+  \end{pmatrix}
+  \begin{pmatrix}
+    u_{00} \\ \vdots \\u_{NM}
+  \end{pmatrix}
+  \\
+  & = 
+  \begin{pmatrix}
+    D_{0,0}u_{00} + \dots + D_{0,NM}u_{NM}
+    \\
+    \ \vdots  \quad \quad 
+    \\
+    D_{NM,0} u_{00} + \dots + D_{NM,MN}u_{NM}
+  \end{pmatrix}
+  \, .
+\end{aligned}
+\end{equation*}
+Then, in the same way
+{\footnotesize
+\begin{align*}
+  &\frac{\partial h_{00}}{\partial u_{00}} = D_{0,0} %\quad 
+  &\frac{\partial h_{00}}{\partial u_{01}} = D_{0,1} %\quad 
+  &&\frac{\partial h_{00}}{\partial u_{02}} = D_{0,2} %\quad 
+  &&\dots 
+  &&\frac{\partial h_{00}}{\partial u_{NM}} = D_{0,NM} %\quad 
+  \\
+  &\frac{\partial h_{01}}{\partial u_{00}} = D_{1,0} %\quad 
+  &\frac{\partial h_{01}}{\partial u_{01}} = D_{1,1} %\quad 
+  &&\frac{\partial h_{01}}{\partial u_{02}} = D_{1,2} %\quad 
+  &&\dots 
+  &&\frac{\partial h_{01}}{\partial u_{NM}} = D_{1,NM} %\quad 
+  \\
+  & & & \vdots 
+  \\
+  &\frac{\partial h_{NM}}{\partial u_{00}} = D_{NM,0} %\quad 
+  &\frac{\partial h_{NM}}{\partial u_{01}} = D_{NM,1} %\quad 
+  &&\frac{\partial h_{NM}}{\partial u_{02}} = D_{NM,2} %\quad 
+  &&\dots 
+  &&\frac{\partial h_{NM}}{\partial u_{NM}} = D_{NM,NM} %\quad 
+  \, .
+\end{align*}
+}
+Thus, $J_{\Dx\un} = \Dx$.
+%\[
+%   =  
+%  \begin{pmatrix}
+%    D_{0,0} & \dots & D_{0,NM}
+%    \\
+%    \vdots  &\ddots & \vdots
+%    \\
+%    D_{NM,0} & \dots & D_{NM,MN}
+%  \end{pmatrix}
+%  = \Dx
+%  \, .
+%\]
+
+To derive the Jacobian of the nonlinear term, $\Un\Dx\un$, we let
+\[
+  \hn(\un) = \Un\Dx \un =
+  \begin{pmatrix}
+    u_{00}[D_{0,0}u_{00} + \dots + D_{0,NM}u_{NM}]
+    \\
+    \vdots 
+    \\
+    u_{NM}[D_{NM,0} u_{00} + \dots + D_{NM,MN}u_{NM}]
+  \end{pmatrix}
+  = 
+  \begin{pmatrix}
+    u_{00}(\Dx \un)_{00}
+    \\
+    \vdots 
+    \\
+    u_{NM}(\Dx \un)_{NM}
+  \end{pmatrix}
+  \, .
+\]
+By using the product rule, we get that
+{\footnotesize
+\begin{align*}
+  &\frac{\partial h_{00}}{\partial u_{00}} = u_{00} D_{0,0} + (\Dx \un)_{00}
+  &&\frac{\partial h_{00}}{\partial u_{01}} = u_{00} D_{0,1} 
+  & \dots\quad 
+  &\frac{\partial h_{00}}{\partial u_{NM}} = u_{00}D_{0,NM}
+  \\
+  &\frac{\partial h_{01}}{\partial u_{00}} = u_{01} D_{1,0}
+  &&\frac{\partial h_{01}}{\partial u_{01}} = u_{01} D_{1,1} + (\Dx \un)_{01}
+  & \dots \quad
+  &\frac{\partial h_{01}}{\partial u_{NM}} = u_{00}D_{0,NM}
+  \\
+  & \quad \quad \vdots 
+  \\
+  &\frac{\partial h_{NM}}{\partial u_{00}} = u_{NM} D_{NM,0}
+  &&\frac{\partial h_{NM}}{\partial u_{01}} = u_{NM} D_{NM,1}
+  & \dots\quad
+  &\frac{\partial h_{NM}}{\partial u_{NM}} = u_{NM} D_{NM,NM} + (\Dx \un)_{NM}
+  \, .
+\end{align*}
+}
+Hence,
+\begin{equation*}
+\begin{aligned}
+  J_{\Un\Dx\un} & = 
+  \begin{pmatrix}
+    u_{00} D_{0,0} + (\Dx \un)_{00}& u_{00} D_{0,1} & \dots & u_{00}D_{0,NM}
+    \\
+    u_{01} D_{1,0} & u_{01} D_{1,1} + (\Dx \un)_{01} & \dots & u_{01}D_{1,NM}
+    \\
+    && \vdots
+    \\
+    u_{NM} D_{NM,0} & u_{NM} D_{NM,1} & \dots & u_{NM}D_{NM,NM} + (\Dx \un)_{NM}
+  \end{pmatrix}
+  \\
+  & = 
+  \underbrace{
+  \begin{pmatrix}
+    u_{00} D_{0,0} & u_{00} D_{0,1} & \dots & u_{00}D_{0,NM}
+    \\
+    u_{01} D_{1,0} & u_{01} D_{1,1}  & \dots & u_{01}D_{1,NM}
+    \\
+    && \vdots
+    \\
+    u_{NM} D_{NM,0} & u_{NM} D_{NM,1} & \dots & u_{NM}D_{NM,NM}
+  \end{pmatrix}
+  }_{\Un \Dx}
+  \\
+  & +
+  \underbrace{
+  \begin{pmatrix}
+    (\Dx \un)_{00} & 0 & \dots & 0
+    \\
+    0 & (\Dx \un)_{01} & \dots & 0
+    \\
+    && \vdots
+    \\
+    0 &  0 & \dots & (\Dx \un)_{NM}
+  \end{pmatrix}
+  }_{\diagn{\Dx \un}}
+  = \Un \Dx + \diagn{\Dx \un}
+  \, ,
+\end{aligned}
+\end{equation*}
+where $\diagn{\Dx \un} = \text{diag}(\Dx \un)$.
+
+In a similar manner, for
+\[  
+  \hn(\un) = \Dx \Un\un =
+  \begin{pmatrix}
+    D_{0,0}u_{00}^2 + \dots + D_{0,NM}u_{NM}^2
+    \\
+    \vdots 
+    \\
+    D_{NM,0} u_{00}^2 + \dots + D_{NM,MN}u_{NM}^2
+  \end{pmatrix}
+\]
+we get that 
+{\footnotesize
+\begin{align*}
+  &\frac{\partial h_{00}}{\partial u_{00}} = 2 D_{0,0}u_{00}
+  &\frac{\partial h_{00}}{\partial u_{01}} = 2 D_{0,1}u_{01}
+  \quad
+  \dots 
+  \quad 
+  &\frac{\partial h_{00}}{\partial u_{NM}} = 2 D_{0,NM}u_{NM}
+  \\
+  &\frac{\partial h_{01}}{\partial u_{00}} = 2 D_{1,0}u_{00}
+  &\frac{\partial h_{01}}{\partial u_{01}} = 2 D_{1,1}u_{01}
+  \quad
+  \dots 
+  \quad 
+  &\frac{\partial h_{01}}{\partial u_{NM}} = 2 D_{1,NM}u_{NM}
+  \\
+  & \quad \quad \vdots 
+  \\
+  &\frac{\partial h_{NM}}{\partial u_{00}} = 2 D_{NM,0}u_{00}
+  &\frac{\partial h_{NM}}{\partial u_{01}} = 2 D_{NM,1}u_{01}
+  \quad
+  \dots 
+  \quad 
+  &\frac{\partial h_{01}}{\partial u_{NM}} = 2 D_{NM,NM}u_{NM}
+  \, .
+\end{align*}
+}
+Hence, $J_{\Dx\Un\un} = 2 \Dx \Un$.
+%\begin{align*}
+%  J_{\Dx\Un\un} & = 2
+%  \begin{pmatrix}
+%    D_{0,0} u_{00} & D_{0,1} u_{01} & \dots & D_{0,NM} u_{NM}
+%    \\
+%    D_{1,0} u_{00} & D_{1,1} u_{01} & \dots & D_{1,NM} u_{NM}
+%    \\
+%    && \vdots 
+%    \\
+%    D_{NM,0} u_{00} & D_{NM,1} u_{01} & \dots & D_{NM,NM} u_{NM}
+%  \end{pmatrix}
+%  =
+%  2 \Dx \Un
+%  \, .
+%\end{align*}
+To summarize, we have shown that
+\begin{equation}
+  J_{\un} = \In, \quad J_{\Dx \un } = \Dx, \quad 
+  J_{\Un \Dx \un} = \Un \Dx + \diagn{\Dx\un}, \quad 
+  J_{\Dx \Un \un} = 2 \Dx \Un
+  \, .
+  \label{eq:jacobians}
+\end{equation}
+
+%\textcolor{blue}{
+%\begin{remark}
+%For completeness, we also state the Jacobian of $\hn(\un) = \Dx (1/\un)$, where the division should be interpreted element-wise. Such terms are for example present in discretizations of the compressible Navier-Stokes equations. By following the same procedure presented above, we get that $J_{\Dx(1/\un) }= -\Dx \diagn{1/(\Un\un)}$.
+%\end{remark}
+%}
+
+\subsection{The Jacobian of the spatial operator}%
+\label{sub:the_jacobian_of_the_spatial_operator}
+Having established these building blocks, we next consider the terms in $\euln(\wn)$. Since these terms have a block structure, their Jacobians will have that as well. Let $\hn^1,\hn^2,\hn^3: \Rbb^{3n} \to \Rbb^n$ be differentiable functions of $\wn$ and define $\tilde{\hn} : \Rbb^{3n}\to \Rbb^{3n}$ given by
+\[
+   \tilde{\hn}(\wn) = 
+   \begin{pmatrix}
+      \hn^1(\wn) \\ \hn^2(\wn) \\ \hn^3(\wn)
+   \end{pmatrix}
+   \, .
+\]
+Since 
+\[
+    \hn^1  = 
+    \begin{pmatrix}
+        h^1_{00} \\ h^1_{01} \\ \vdots \\ h^1_{NM}
+    \end{pmatrix}
+    \quad 
+    \text{and}
+    \quad
+    \wn = 
+    \begin{pmatrix}
+        \un \\ \vn \\ \pn
+    \end{pmatrix}
+\]
+it follows that 
+\begin{align*}
+    J_{h^1_{00}} = 
+    \frac{\partial h^1_{00}}{\partial \wn} 
+    & =
+    \begin{pmatrix}
+       \frac{\partial h^1_{00}}{\partial w_{00}} 
+       & 
+       \dots 
+       &
+       \frac{\partial h^1_{00}}{\partial w_{3NM}} 
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        \frac{\partial h^1_{00}}{\partial \un} 
+        & 
+        \frac{\partial h^1_{00}}{\partial \vn}
+        &
+        \frac{\partial h^1_{00}}{\partial \pn}
+    \end{pmatrix} \in \Rbb^{1\times 3n}
+\end{align*}
+and similarly for every element in $\hn^1$. Therefore, the Jacobian of $\hn^1$ can be expressed as
+\[
+    J_{\hn^1} = 
+    \frac{\partial \hn^1}{\partial \wn} 
+    =
+    \begin{pmatrix}
+      \frac{\partial h^1_{00}}{\partial \un} & 
+      \frac{\partial h^1_{00}}{\partial \vn} & 
+      \frac{\partial h^1_{00}}{\partial \pn} 
+      \\
+      \frac{\partial h^1_{01}}{\partial \un} & 
+      \frac{\partial h^1_{01}}{\partial \vn} & 
+      \frac{\partial h^1_{01}}{\partial \pn} 
+      \\
+      \vdots  & \vdots & \vdots
+      \\
+      \frac{\partial h^1_{NM}}{\partial \un} & 
+      \frac{\partial h^1_{NM}}{\partial \vn} & 
+      \frac{\partial h^1_{NM}}{\partial \pn} 
+    \end{pmatrix}
+    = 
+    \begin{pmatrix}
+      \frac{\partial \hn^1}{\partial \un} & 
+      \frac{\partial \hn^1}{\partial \vn} & 
+      \frac{\partial \hn^1}{\partial \pn} 
+    \end{pmatrix}
+    \in \Rbb^{n\times 3n}
+    \, .
+\]
+The same holds for $\hn^2$ and $\hn^3$. Thus, the Jacobian of $\tilde{\hn}$ is given by
+\[
+  J_{\tilde{\hn}} =
+  \begin{pmatrix}
+    \frac{\partial \hn^1 }{\partial \un} &
+    \frac{\partial \hn^1 }{\partial \vn} & 
+    \frac{\partial \hn^1 }{\partial \pn}
+    \\
+    \frac{\partial \hn^2 }{\partial \un} &
+    \frac{\partial \hn^2 }{\partial \vn} & 
+    \frac{\partial \hn^2 }{\partial \pn}
+    \\
+    \frac{\partial \hn^3 }{\partial \un} &
+    \frac{\partial \hn^3 }{\partial \vn} & 
+    \frac{\partial \hn^3 }{\partial \pn}
+  \end{pmatrix}
+  \in \Rbb^{3n\times 3n}
+\]
+and each block in $J_{\tilde{\hn}}$ is of size $n\times n$. 
+
+For the first term in $\euln(\wn)$, $\An (I_3 \otimes \Dx) \wn$, we get 
+\[
+  \tilde{\hn}(\wn) = 
+  \begin{pmatrix}
+    \hn^1(\wn) \\ \hn^2(\wn) \\ \hn^3(\wn) 
+  \end{pmatrix}
+  =
+  \An (I_3 \otimes \Dx) \wn = 
+  \begin{pmatrix}
+    \Un \Dx \un  + \Dx \pn
+    \\
+    \Un \Dx \vn
+    \\
+    \Dx \un
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \Un \Dx \un  + \Dx \pn
+    \\
+    \diagn{\Dx \vn}\un 
+    \\
+    \Dx \un
+  \end{pmatrix}
+  \, .
+\]
+The last identities are useful when deriving $J_{\An (I_3 \otimes \Dx) \wn}$. By using \eqref{eq:jacobians}, we get that
+\begin{align*}
+  \frac{\partial\hn^1}{\partial \un}  & = \Un \Dx + \diagn{\Dx\un}
+  \quad
+  & \frac{\partial\hn^1}{\partial \vn} & = \zeron
+  \quad
+  & \frac{\partial\hn^1}{\partial \pn} & = \Dx
+  \\
+  \frac{\partial\hn^2}{\partial \un}  & = \diagn{\Dx\vn} 
+  \quad
+  &\frac{\partial\hn^2}{\partial \vn}  & = \Un \Dx
+  \quad
+  &\frac{\partial\hn^2}{\partial \pn}  & = \zeron
+  \\
+  \frac{\partial\hn^3}{\partial \un}  & = \Dx
+  \quad
+  &\frac{\partial\hn^3}{\partial \vn}  & = \zeron
+  \quad
+  &\frac{\partial\hn^3}{\partial \pn}  & = \zeron
+  \, .
+\end{align*}
+Thus,
+\[
+  J_{\An (I_3 \otimes \Dx) \wn}
+  =
+  \begin{pmatrix}
+     \Un \Dx + \diagn{\Dx\un} & \zeron & \Dx
+     \\
+     \diagn{\Dx \vn} & \Un \Dx & \zeron
+     \\
+     \Dx & \zeron & \zeron
+  \end{pmatrix}
+  \, .
+\]
+Likewise for the second term in $\euln(\wn)$, $(I_3 \otimes \Dx) \An \wn$, note that
+\[
+  (I_3 \otimes \Dx) \An \wn = 
+  \begin{pmatrix}
+    \Dx \Un \un  + \Dx \pn
+    \\
+    \Dx \Un \vn
+    \\
+    \Dx \un
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \Dx \Un \un  + \Dx \pn
+    \\
+    \Dx \Vn \un
+    \\
+    \Dx \un
+  \end{pmatrix}
+  \, ,
+\]
+where we have used that $\Vn \un  = \Un \vn$. Hence, 
+\[
+  J_{(I_3 \otimes \Dx) \An \wn} =
+  \begin{pmatrix}
+     2 \Dx \Un & \zeron & \Dx
+     \\
+     \Dx \Vn & \Dx \Un & \zeron
+     \\
+     \Dx & \zeron & \zeron
+  \end{pmatrix}
+  \, .
+\]
+The next two terms in $\euln(\wn)$ are treated in a similar manner and we get that
+\begin{align*}
+  J_{\Bn (I_3 \otimes \Dy) \wn} = &
+  \begin{pmatrix}
+     \Vn \Dy &  \diagn{\Dy\un} & \zeron
+     \\
+     \zeron & \Vn \Dy + \diagn{\Dy \vn} & \Dy
+     \\
+      \zeron & \Dy & \zeron
+  \end{pmatrix}
+  \\
+  J_{(I_3 \otimes \Dy)\Bn\wn} = &
+  \begin{pmatrix}
+     \Dy\Vn &  \Dy\Un & \zeron
+     \\
+     \zeron & 2\Dy\Vn  & \Dy
+     \\
+      \zeron & \Dy & \zeron
+  \end{pmatrix}
+  \, .
+\end{align*}
+Finally, the contribution to the Jacobian of the linear viscous terms simply becomes
+\[
+  J_{-\epsilon\Itn [(I_3\otimes \Dx)^2 +(I_3\otimes \Dy)^2]\wn} =
+  -
+  \begin{pmatrix}
+     \epsilon (\Dx^2 + \Dy^2) & \zeron & \zeron
+     \\
+     \zeron & \epsilon (\Dx^2 + \Dy^2) & \zeron
+     \\
+     \zeron & \zeron & \zeron
+  \end{pmatrix}
+  \, .
+\]
+
+Adding all terms proves the following proposition, which is the first of the two main results of this paper.
+
+\begin{proposition}
+  The Jacobian $J_{\euln}$ of the discrete operator $\euln$ in~\eqref{eq:ins_semi_discrete} is
+  \begin{equation}
+    J_{\euln} =
+    \begin{pmatrix}
+      J_{11} & \frac{1}{2} \left(\diagn{\Dy\un} + \Dy\Un\right)& \Dx \\
+       \frac{1}{2} \left(\diagn{\Dx\vn} + \Dx\Vn\right) & J_{22} & \Dy \\
+      \Dx & \Dy & \zeron \\
+    \end{pmatrix}
+    \label{eq:J_L}
+  \end{equation}
+  where
+  \begin{align*}
+    J_{11} &= \frac{1}{2} \left(\Un\Dx + \diagn{\Dx\un} + 2\Dx\Un + \Vn\Dy + \Dy\Vn\right)  - \epsilon (\Dx^2 + \Dy^2)\\
+    J_{22} &= \frac{1}{2} \left(\Vn\Dy + \diagn{\Dy\vn} + 2\Dy\Vn + \Un\Dx + \Dx\Un\right)  - \epsilon (\Dx^2 + \Dy^2)
+    \, .
+  \end{align*}
+  \label{prop:ins}
+\end{proposition}
+
+\subsection{The Jacobian of the penalty terms}
+By following the procedure presented above, we next derive the Jacobian for $\satn(\wn)$. To start, we rewrite $\satn^S(\wn)$ as
+\begin{equation}
+  \satn^S(\wn) = 
+  \begin{pmatrix}
+    \satn_1^S \\
+    \satn_2^S \\
+    \satn_3^S \\
+  \end{pmatrix}
+  =
+  (I_3\otimes \Pn^{-1}) 
+  \begin{pmatrix}
+    -\Vn\Pn^S \un/2 + \epsilon \Dy^\top \Pn^S \un 
+    \\
+     -\Vn\Pn^S\vn /2+ \epsilon \Dy^\top \Pn^S \vn
+    \\
+    - \Pn^S\vn
+  \end{pmatrix}
+  \in \Rbb^{3n}
+  \, .
+  \label{eq:sat_s}
+\end{equation}
+The Jacobian of $\satn^S(\wn)$ is
+\[
+  J_{\satn^S} = 
+  \begin{pmatrix}
+    \frac{\partial \satn_1^S}{\partial \un}
+    & 
+    \frac{\partial \satn_1^S}{\partial \vn}
+    &
+    \frac{\partial \satn_1^S}{\partial \pn}
+    \\
+    \frac{\partial \satn_2^S}{\partial \un}
+    & 
+    \frac{\partial \satn_2^S}{\partial \vn}
+    &
+    \frac{\partial \satn_2^S}{\partial \pn}
+    \\
+    \frac{\partial \satn_3^S}{\partial \un}
+    & 
+    \frac{\partial \satn_3^S}{\partial \vn}
+    &
+    \frac{\partial \satn_3^S}{\partial \pn}
+  \end{pmatrix}
+  \in \Rbb^{3n\times 3n}
+  \, .
+\]
+The first block in $J_{\satn^S}$ becomes
+{\small
+\begin{align*}
+  \frac{\partial \satn_1^S}{\partial \un} & =
+  \Big(-
+  \underbrace{\frac{\partial}{\partial \un}
+  \Pn^{-1}\Vn\Pn^S \un/2}_{= \Pn^{-1}\Vn\Pn^S/2}
+  + 
+  \underbrace{
+  \frac{\partial}{\partial \un}
+  \epsilon \Pn^{-1}\Dy^\top \Pn^S\un}_{= \epsilon\Pn^{-1} \Dy^\top \Pn^S} \Big)
+  =
+  \Pn^{-1}
+  \left(-\Vn/2 + \epsilon \Dy^\top\right)\Pn^S 
+  \, .
+\end{align*}
+}
+Since $\Pn^S$ is diagonal, we have $\Vn \Pn^s \un = \Un \Pn^S \vn$ and the second block is
+{\small
+\begin{align*}
+  \frac{\partial \satn_1^S}{\partial \vn} & =
+  \Big(-
+  \underbrace{\frac{\partial}{\partial \vn}
+  \Pn^{-1}\Un\Pn^S \vn/2}_{= \Pn^{-1}\Un \Pn^S /2}
+  + 
+  \underbrace{
+  \frac{\partial}{\partial \vn}\epsilon \Pn^{-1}\Dx^\top \Pn^S\un}_{= \zeron} \Big)
+  = -\Pn^{-1}\Un\Pn^S /2
+  \, .
+\end{align*}
+}
+Note that $\satn^S$ does not depend on $\pn$ and also that $\satn_2^S$ and $\satn_3^S$ are both independent of $\un$. Hence, the remaining non-zero blocks of $J_{\satn^S}$ are
+\begin{align*}
+   \frac{\partial \satn^W_2}{\partial \vn} &= \Pn^{-1}(-\Vn + \epsilon \Dy^\top)\Pn^S
+   ,\quad  
+   & \frac{\partial \satn_3^W}{\partial \vn} & = -\Pn^{-1}\Pn^S
+   \, ,
+\end{align*}
+where we have used that $\Vn \Pn^s \vn = \Pn^s \Vn \vn$. 
+Therefore, 
+\[
+    J_{\satn^S} = 
+    (I_3 \otimes \Pn^{-1})
+    \begin{pmatrix}
+        -\Vn/2 + \epsilon \Dy^\top & -\Un/2 & \zeron
+        \\
+        \zeron  & -\Vn + \epsilon \Dy^\top & \zeron
+        \\
+        \zeron & -\In & \zeron
+    \end{pmatrix}
+    (I_3 \otimes \Pn^S)
+    \, .
+\]
+
+For non-homogeneous boundary conditions, the boundary data $\gn$ will affect the Jacobian if the SAT:s are nonlinear with respect to $\wn$. We illustrate this by considering $\satn^W_1$ (the first block in $\satn^W$), which we rewrite in a similar manner as we did for $\satn^S_1$ in \eqref{eq:sat_s} and get
+\begin{align*}
+ \satn^W_1(\wn) & =  \Pn^{-1}(-\Un/2 + \epsilon\Dx^\top)\Pn^W(\un - \gn_1)
+ \\
+  & = -\Pn^{-1}\Un\Pn^W(\un - \gn_1)/2 
+  + \epsilon\Pn^{-1}\Dx^\top\Pn^W(\un - \gn_1)
+             \, .
+\end{align*}
+Note that the terms $-\Pn^{-1}\Un\Pn^W(\un - \gn_1)/2$ and $\epsilon \Pn^{-1}\Dx^\top\Pn^W(\un - \gn_1)$ are nonlinear and linear with respect to $\wn$ (via $\un$), respectively. The Jacobian to the linear term simply becomes
+\begin{align*}
+   \frac{\partial}{\partial \un}\left(\epsilon \Pn^{-1}\Dx^\top\Pn^W(\un - \gn_1) \right) 
+   = 
+   \underbrace{
+   \frac{\partial}{\partial \un}\left(\epsilon \Pn^{-1}\Dx^\top\Pn^W\un\right) 
+   }_{= \epsilon \Pn^{-1}\Dx^\top\Pn^W}
+   -
+   \underbrace{
+   \frac{\partial}{\partial \un}\left(\epsilon \Pn^{-1}\Dx^\top\Pn^W\gn_1\right) 
+   }_{ = 0}
+   \, .
+\end{align*}
+For the nonlinear term, we use that $\Un \Pn^W = \Pn^W \Un$ and $\Un \gn_1 = \diagn{\gn_1}\un$, which yield
+\begin{align*}
+   -\frac{\partial}{\partial \un}\left(\Pn^{-1}\Pn^W\Un(\un - \gn_1)/2\right) 
+   & = 
+   \underbrace{
+   -\frac{\partial}{\partial \un}\left(\Pn^{-1}\Pn^W\Un\un)/2\right)}_
+   {= -\Pn^{-1}\Pn^W\Un} 
+   +
+   \underbrace{
+   \frac{\partial}{\partial \un}\left(\Pn^{-1}\Pn^W\diagn{\gn_1}\un)/2\right)
+   }_{=\Pn^{-1}\Pn^W \diagn{\gn_1}/2} 
+   \\
+   & = \Pn^{-1}(-\Un + \diagn{\gn_1}/2)\Pn^W
+\end{align*}
+Since $\satn_1^W$ is independent of both $\vn$ and $\pn$, its Jacobian becomes
+\[
+   J_{\satn^W_1}(\wn) = 
+   \begin{pmatrix}
+     \Pn^{-1}(-(\Un - \diagn{\gn_1}/2) + \epsilon \Dx^\top)\Pn^W  
+     & \zeron & \zeron
+   \end{pmatrix}
+   \in \Rbb^{n\times 3n}
+\]
+
+The Jacobian of the other penalty terms are derived in a similar manner and we have therefore proved the second main result of this paper.
+
+\begin{proposition}
+The Jacobian of the total penalty term \eqref{eq:total_penalty} is
+\begin{equation}
+  J_{\satn} (\wn) = \sum_{k\in\{W,E,S,N\}} J_{\satn^k}(\wn)
+  \, ,
+  \label{eq:jacobian_penalty}
+\end{equation}
+where 
+\begin{equation*}
+\begin{aligned}
+   J_{\satn^W}(\wn) & = (I_3\otimes \Pn^{-1})
+  \begin{pmatrix}
+   -(\Un-\diagn{\gn_1}/2) + \epsilon \Dx^\top & \zeron & \zeron
+   \\
+   -(\Vn-\diagn{\gn_2})/2 & -\Un/2 + \epsilon \Dx^\top & \zeron 
+   \\
+   -\In & \zeron & \zeron
+  \end{pmatrix}
+  (I_3\otimes \Pn^W)
+  \\
+  J_{\satn^E}(\wn) & = (I_3\otimes \Pn^{-1}\Pn^E) 
+  \begin{pmatrix}
+   - \epsilon \Dx & \zeron & \In
+   \\
+   \zeron & - \epsilon \Dx & \zeron 
+   \\
+   \zeron & \zeron & \zeron
+  \end{pmatrix}
+  \\
+  J_{\satn^S}(\wn) & = (I_3\otimes \Pn^{-1}\Pn^S) 
+  \begin{pmatrix}
+   -\Vn/2 + \epsilon \Dy^\top& -\Un/2 & \zeron
+   \\
+   \zeron & -\Vn + \epsilon \Dy^\top & \zeron 
+   \\
+   \zeron & -\In & \zeron
+  \end{pmatrix}
+  (I_3\otimes \Pn^S)
+  \\
+  J_{\satn^N}(\wn) & = (I_3\otimes \Pn^{-1}\Pn^N)
+  \begin{pmatrix}
+   - \epsilon \Dy & \zeron & \zeron
+   \\
+   \zeron & - \epsilon \Dy & \In
+   \\
+   \zeron & \zeron & \zeron
+  \end{pmatrix}
+   \, .
+\end{aligned}
+\end{equation*}
+\label{prop:sat}
+\end{proposition}
+
+\begin{remark}
+We see from \Cref{prop:ins} and \Cref{prop:sat} that parts of the blocks in the Jacobian of both $J_{\euln}$ and $J_{\satn}$ are obtained directly from the construction of $\euln$. The few remaining parts are obtained by $i)$ matrix multiplications between a diagonal matrix and a non-diagonal one,
+ for example $\Un \Dx$ and $ii)$ matrix additions. This leads to few new additional operations and hence efficiency.
+\end{remark}

@@ -1,0 +1,16 @@
+Highlights
+
+
+o It is shown how to compute an exact explicit Jacobian for numerical approximations of initial boundary value problems
+
+o The Jacobian of a numerical discretization of the Navier-Stokes equations is derived, as an example.
+
+o Newton's method is used to solve the corresponding nonlinear system of equations, employing the new technique.
+
+o The additional cost of evaluating the Jacobian is small.
+
+o The correct implementation of the Jacobian and the numerical discretization are verified by numerical experiments.
+
+o This new technique can be used on any numerical approximations of initial boundary value problems on matrix-vector form. 
+
+

@@ -1,0 +1,261 @@
+\section{The semi-discrete scheme}\label{sec:semi_discrete}
+A brief introduction of the SBP-SAT technique is provided below and we recommend \cite{fernandez2014review,svard2014review} for extensive reviews. 
+
+We discretize the domain $\Omega = [0,1]^2$ with $N+1$ and $M+1$ grid points; $x_i = i/N$, $i = 0,\dots, N$ and $y_j = j/M$, $j= 0,\dots,M$ and let $n = (N+1)(M+1)$ denote the total number of grid points. A scalar function $q = q(x,y)$ defined on $\Omega$ is thereby represented on the grid by $\qn = (q_{00}, \dots, q_{0M}, \dots q_{N0},\dots q_{NM})^\top$ where $q_{ij} = q(x_i,y_j)$. For the vector-valued function $\vecs{w} = (u,v,p)^\top$, the approximation is arranged as $\wn = (\un^\top,\vn^\top,\pn^\top)^\top$.
+Let $\Dx = (P^{-1}_x Q_x) \otimes I_{M+1}$ and $\Dy = I_{N+1} \otimes (P^{-1}_y Q_y)$, where $\otimes$ denotes the Kronecker product. Then the approximations of the spatial derivatives are given by 
+\[
+  \Dx \un \approx \un_x,
+  \quad 
+  \Dy \un \approx \un_y
+  \, .
+\]
+The matrices $P_{x,y}$ are diagonal and positive definite, so that $\Pn = P_x\otimes P_y$ forms a quadrature rule that defines the norm $\|\wn\|^2_{I_3\otimes\Pn} = \wn^\top (I_3\otimes\Pn) \wn \approx \iint_\Omega \vecs{w}^\top \vecs{w} d\Omega$. We have also introduced $I_{k}$, which is the identity matrix of size $k$. Moreover, the matrices $Q_{x,y}$ satisfy the SBP-property 
+\begin{equation}
+  Q_{x} + Q_{x}^\top = E_N - E_{0x}
+  \quad 
+  Q_{y} + Q_{y}^\top = E_M - E_{0y}
+  \, ,
+  \label{eq:sbp_property}
+\end{equation}
+where $E_{0x,y} = \text{diag}(1,0,0, \dots,0)$ and $E_{N,M} = \text{diag}(0,0,0,\dots,1)$ are matrices of appropriate sizes.
+
+By using the notation above, the semi-discrete approximation of \eqref{eq:ins_continuous} becomes \cite{nordstrom2019energy}
+\begin{equation}
+  \label{eq:ins_semi_discrete}
+  \Itn \wn_t  + \euln(\wn) = \satn(\wn) \, .
+\end{equation}
+The discrete spatial operator is given by
+\begin{equation*}
+\begin{aligned}
+  \euln(\wn) &=
+  \frac{1}{2}\left[\An (I_3\otimes \Dx)\wn + (I_3\otimes \Dx) \An\wn +
+                   \Bn (I_3\otimes \Dy)\wn + (I_3\otimes \Dy) \Bn\wn\right]
+  \\
+  & - \epsilon \Itn [(I_3\otimes \Dx)^2 + (I_3\otimes \Dy)^2]\wn \, ,
+\end{aligned}
+\end{equation*}
+and the block matrices are
+\[
+  \An = 
+  \begin{pmatrix}
+    \Un & \zeron & \In 
+    \\
+    \zeron  & \Un & \zeron
+    \\
+    \In & \zeron & \zeron
+  \end{pmatrix}
+  ,
+  \quad 
+  \Bn = 
+  \begin{pmatrix}
+    \Vn &  \zeron & \zeron 
+    \\
+    \zeron  & \Vn & \In
+    \\
+    \zeron & \In & \zeron
+  \end{pmatrix}
+  ,
+  \quad
+  \Itn = 
+  \begin{pmatrix}
+    \In &  \zeron & \zeron 
+    \\
+    \zeron  & \In & \zeron
+    \\
+    \zeron & \zeron & \zeron
+  \end{pmatrix}
+  \, ,
+\]
+where $\Un,\Vn \in \Rbb^{n\times n}$ are diagonal matrices holding $\un,\vn$, respectively. The matrices $\In$ and $\zeron$ are the identity and the zero matrix of size $n\times n$. Furthermore, $\satn(\wn)$ contains penalty terms that enforce the boundary conditions. 
+
+The purpose of the SAT $\satn(\wn)$ is $i)$ to enforce the boundary conditions in \eqref{eq:boundary_conditions} and $ii)$ to stabilize the solution. 
+One penalty term for each of the boundary conditions in \eqref{eq:boundary_conditions} will be constructed. Let $k\in\{W,E,S,N\}$. The SAT at boundary $k$ that enforces the boundary condition $H^k\vecs{w} = \g$ has the general form
+\begin{equation}
+  \satn^k(\wn) = (I_3\otimes\Pn^{-1})\Sigma^k(I_3\otimes\Pn^{k})(\Hn^k\wn - \vec{\gn})
+  \, .
+  \label{eq:penalty_general}
+\end{equation}
+In \eqref{eq:penalty_general}, $\Sigma^k$ is the penalty matrix to be determined for stability at boundary $k$. The quadratures are
+\begin{equation*}
+	\Pn^k = 
+	\begin{cases}
+    E_{0x}\otimes P_y 	\quad 	& \text{on the west boundary } (k = W)
+		\\
+    E_N\otimes P_y 	\quad  	& \text{on the east boundary } (k = E)
+		\\
+    P_x\otimes E_{0y} 	\quad  	& \text{on the south boundary } (k = S)
+		\\
+		P_x\otimes E_M 	\quad  	& \text{on the north boundary } (k = N)
+    \, .
+	\end{cases}
+\end{equation*}
+
+For the boundary conditions listed in \eqref{eq:boundary_conditions}, the penalty terms are
+\begin{equation}
+\begin{aligned}
+   \satn^W(\wn) & = (I_3\otimes \Pn^{-1})
+    \Sigma^W
+   (I_3\otimes \Pn^W)
+   \underbrace{
+   \begin{pmatrix}
+      \un - \gn_1
+      \\
+      \vn - \gn_2
+      \\
+      \un - \gn_1
+   \end{pmatrix}
+   }_{\Hn^W\wn - \vecs{\gn}}
+   \\
+   \satn^E(\wn) & = (I_3\otimes \Pn^{-1}) 
+   \Sigma^E
+   (I_3\otimes \Pn^E)
+   \underbrace{
+   \begin{pmatrix}
+      \pn - \epsilon \Dx \un - \gn_3
+      \\
+      -\epsilon \Dx \vn - \gn_4
+      \\
+      \zeron
+   \end{pmatrix}
+   }_{\Hn^E\wn - \vecs{\gn}}
+  \\
+  \satn^S(\wn) & = (I_3\otimes \Pn^{-1})
+  \Sigma^S(I_3\otimes \Pn^S)
+   \underbrace{
+   \begin{pmatrix}
+      \un - \zeron
+      \\
+      \vn - \zeron
+      \\
+      \vn - \zeron
+   \end{pmatrix}
+   }_{\Hn^S\wn - \zeron}
+   \\
+  \satn^N(\wn) & = (I_3\otimes \Pn^{-1}) 
+  \Sigma^N
+   (I_3\otimes \Pn^N)
+   \underbrace{
+   \begin{pmatrix}
+      - \epsilon \Dy \un - \gn_6
+      \\
+      \pn -\epsilon \Dy \vn - \gn_5
+      \\
+      \zeron
+   \end{pmatrix}
+   }_{\Hn^N\wn - \vecs{\gn}}
+   \, ,
+  \end{aligned}
+\label{eq:penalty_terms}
+\end{equation}
+where 
+\begin{align*}
+   \Sigma^W & = 
+   \begin{pmatrix}
+      -\Un/2 + \epsilon \Dx^\top & \zeron & \zeron
+      \\
+      \zeron & -\Un/2 + \epsilon \Dx^\top & \zeron
+      \\
+      \zeron & \zeron & -\In
+   \end{pmatrix}
+   ,
+   \quad
+   &\Sigma^E & = (I_3\otimes \In)
+   \\
+   \Sigma^S & = 
+    \begin{pmatrix}
+      -\Vn/2 + \epsilon \Dy^\top & \zeron & \zeron
+      \\
+      \zeron & -\Vn/2 + \epsilon \Dy^\top & \zeron
+      \\
+      \zeron & \zeron & -\In 
+   \end{pmatrix}
+   ,
+   \quad
+   &\Sigma^N & = (I_3\otimes \In)
+   \, .
+\end{align*}
+As an example, the south penalty term can be written as 
+\begin{equation}
+\begin{aligned}
+  \satn^S(\wn) & = 
+  %(I_3 \otimes \Pn^{-1})
+  %\underbrace{
+  %\begin{pmatrix}
+  %   (-\Vn/2 + \epsilon \Dy^\top)\Pn^S \un
+  %   \\
+  %   (-\Vn/2 + \epsilon \Dy^\top)\Pn^S \vn
+  %   \\
+  %   -\Pn^S \vn
+  %\end{pmatrix}
+  %}_{\Sigma^S (I_3\otimes \Pn^s)\Hn^s \wn}
+  %= 
+  (I_3 \otimes \Pn^{-1})
+  \begin{pmatrix}
+     -\Vn\Pn^S\un/2 + \epsilon \Dy^\top\Pn^S\un
+     \\
+     -\Vn\Pn^S\vn/2 + \epsilon \Dy^\top\Pn^S\vn
+     \\
+     -\Pn^S \vn
+  \end{pmatrix}
+  \, ,
+  \label{eq:SatS}
+\end{aligned}
+\end{equation}
+which is a more convenient notation for the derivation of the Jacobian in \Cref{sec:jacobian}.
+
+We will show in the following section that this specific choice of penalty matrices leads to nonlinear stability.
+The total penalty term in \eqref{eq:ins_semi_discrete} becomes
+\begin{equation}
+  \satn(\wn) = \sum_{k\in\{W,E,S,N\}} \satn(\wn)^k
+  \, .
+  \label{eq:total_penalty}
+\end{equation}
+
+\subsection{Boundedness and Stability}
+For completeness, we also show schematically how to obtain an energy estimate (again all details can be found in \cite{nordstrom2019energy}). Similarly to the continuous analysis, we omit all boundaries except for the south one. By mimicking the continuous path \cite{nordstrom2017roadmap}, we multiply \eqref{eq:ins_semi_discrete} by $2\wn^\top (I_3\otimes \Pn)$ from the left and use the SBP-property \eqref{eq:sbp_property} to get
+\begin{equation}
+  \frac{d}{dt}\|\wn\|^2_{\It\otimes \Pn} 
+  + 2\epsilon \|\nabla \wn\|^2_{\It\otimes \Pn} = \BTn
+  \, ,
+  \label{eq:energy}
+\end{equation}
+where $\|\nabla \wn\|^2_{\It\otimes \Pn} = (I_3\otimes \Dx \wn)^\top (I_3\otimes \Pn)\Itn(I_3\otimes \Dx \wn) + (I_3\otimes \Dy \wn)^\top (I_3\otimes \Pn)\Itn(I_3\otimes \Dy \wn)$ is the dissipative volume term corresponding to the continuous one and 
+\begin{equation}
+\begin{aligned}
+  \bm{BT} = & 
+  \underbrace{
+  \wn^\top(I_3 \otimes \Pn^S)\Bn\wn - 2\epsilon \wn^\top (I_3\otimes \Pn^S)\Itn (I_3 \otimes \Dy) \wn}_I
+  \\
+  & 
+  \underbrace{
+  + 
+  2 \wn (I_3\otimes \Pn) \satn^S(\wn)}_{II}
+  \label{eq:BT}
+\end{aligned}
+\end{equation}
+contains all terms evaluated at the boundary. 
+
+The semi-norm of the solution ($\|\wn\|^2_{\It\otimes \Pn}$)  is bounded if the right-hand side of \eqref{eq:energy} is non-positive. By expanding \eqref{eq:BT} and using the explicit form of $\satn^S(\wn)$ stated in \eqref{eq:penalty_terms}, we find
+\begin{equation*}
+\begin{aligned}
+ \bm{BT} & = && 
+ \underbrace{
+ \vn^\top \Pn^S(\Un\un + \Vn \vn + 2\pn - 2 \epsilon  \Dy \vn ) -2 \epsilon\un^\top \Pn^S\Dy\un}_I
+  \\
+  &&&
+  \underbrace{
+  - 2\vn^\top \Pn^S(\Un \un/2 + \Vn \vn/2 + \pn^\top \vn - \epsilon \Dy \vn) 
+  + 2\epsilon \un^\top \Pn^S \Dy \un}_{II}
+  = 0
+  \, ,
+\end{aligned}
+\end{equation*}
+where term $I$ is obtained from the governing equation and term $II$ from the penalty term.
+As in the continuous setting, the boundary terms vanish.
+Integrating \eqref{eq:energy} in time (assuming homogeneous dissipative boundary conditions at all boundaries) leads to
+\begin{equation*}
+  \|\wn\|^2_{\It\otimes \Pn} (T)
+  + 2\epsilon \int_0^T\|\nabla \wn\|^2_{\It\otimes \Pn} dt \le \|\fn\|^2_{\It\otimes \Pn}
+  \, ,
+\end{equation*}
+which is the semi-discrete version of the estimate in \eqref{eq:estimate_continuous}.
